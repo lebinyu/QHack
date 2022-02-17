@@ -22,11 +22,26 @@ def error_wire(circuit_output):
     """
 
     # QHACK #
-
+    
     # process the circuit output here and return which qubit was the victim of a bitflip error!
-
+    wire0 = np.array(circuit_output[0])
+    wire1 = np.array(circuit_output[1])
+    wire2 = np.array(circuit_output[2])
+    # print(wire1)
+    # print(np.array_equiv(np.round(wire1,1),np.tensor([1.0,0.0])))
+    if np.array_equiv(wire1,wire2):
+        return [wire1[0], wire1[1], 0.0, 0.0]
+    elif np.array_equiv(np.round(wire1,1), np.array([1.0,0.0])) and np.array_equiv(np.round(wire2,1),np.array([1.0,0.0])):
+        # print(0)
+        return [wire1[0], wire1[1], 0.0, 0.0]
+    elif np.array_equiv(np.round(wire2,1), np.array([1.0, 0.0])):
+        # print(1)
+        return [wire1[0], 0.0, wire1[1], 0.0]
+    elif np.array_equiv(np.round(wire1,1), np.array([1.0, 0.0])):
+        # print(2)
+        return [wire2[0], 0.0, 0.0, wire2[1]]
+    # return circuit_output
     # QHACK #
-
 
 dev = qml.device("default.mixed", wires=3)
 
@@ -51,13 +66,18 @@ def circuit(p, alpha, tampered_wire):
     # QHACK #
 
     # put any input processing gates here
-
+    qml.CNOT(wires=[0,1])
+    qml.CNOT(wires=[0,2])
     qml.BitFlip(p, wires=int(tampered_wire))
 
     # put any gates here after the bitflip error has occurred
-
+    qml.CNOT(wires=[0,1])
+    qml.CNOT(wires=[0,2])
+    qml.Toffoli(wires=[1,2,0])
     # return something!
+    return qml.probs(wires=0), qml.probs(wires=[1]), qml.probs(wires=[2])
     # QHACK #
+
 
 
 def density_matrix(alpha):
@@ -73,6 +93,7 @@ def density_matrix(alpha):
 if __name__ == "__main__":
     # DO NOT MODIFY anything in this code block
     inputs = np.array(sys.stdin.read().split(","), dtype=float)
+    # inputs = np.array([0.8, 0.9876, 0])
     p, alpha, tampered_wire = inputs[0], inputs[1], int(inputs[2])
 
     error_readout = np.zeros(4, dtype=float)

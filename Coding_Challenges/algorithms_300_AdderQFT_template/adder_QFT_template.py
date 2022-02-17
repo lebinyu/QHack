@@ -14,9 +14,30 @@ def qfunc_adder(m, wires):
     """
 
     qml.QFT(wires=wires)
-
+    
     # QHACK #
+    # print(m)
+    num=0
+    for i in bin(m)[:1:-1]:
+        # print(type(i))
+        if i == '1':
+            phase = 0
+            for wire in range(num, len(wires)):
+                # print(i)
+                # print(len(wires))
+                # print(num,wire)
+                qml.RZ(2*np.pi/(2**(phase+1)),wires=wire)
+                phase += 1    
+        num+=1
 
+
+    # qml.RZ(2*np.pi/(2**(1)),wires=0)
+    # qml.RZ(2*np.pi/(2**(2)),wires=1)
+    # qml.RZ(2*np.pi/(2**(3)),wires=2)
+    # qml.RZ(2*np.pi/(2**(4)),wires=3)
+
+    # qml.RZ(2*np.pi/(2**(1)),wires=2)
+    # qml.RZ(2*np.pi/(2**(2)),wires=3)
     # QHACK #
 
     qml.QFT(wires=wires).inv()
@@ -25,6 +46,7 @@ def qfunc_adder(m, wires):
 if __name__ == "__main__":
     # DO NOT MODIFY anything in this code block
     inputs = sys.stdin.read().split(",")
+    # inputs = np.array([2,3])
     m = int(inputs[0])
     n_wires = int(inputs[1])
     wires = range(n_wires)

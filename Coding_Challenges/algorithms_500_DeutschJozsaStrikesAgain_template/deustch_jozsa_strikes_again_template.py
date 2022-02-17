@@ -17,7 +17,18 @@ def deutsch_jozsa(fs):
     """
 
     # QHACK #
-
+    dev = qml.device("default.qubit", wires=7, shots=1)
+    @qml.qnode(dev)
+    def circuit(fs):
+        # data qubit
+        qml.Hadamard(wires=0)
+        qml.Hadamard(wires=1)
+        # auxilary
+        qml.PauliX(wires=2)
+        qml.PauliX(wires=3)
+        qml.PauliX(wires=4)
+        qml.PauliX(wires=5)
+        pass
     # QHACK #
 
 

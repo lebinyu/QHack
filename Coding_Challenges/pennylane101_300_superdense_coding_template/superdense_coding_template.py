@@ -22,11 +22,26 @@ def superdense_coding(bits, alpha):
     # QHACK #
 
     # Prepare entangled state here
+    # qml.Hadamard(wires=0)
+    qml.RY(alpha*2,wires=0)
 
+    # qml.RZ(2*alpha,wires=0)
+    qml.CNOT(wires=[0,1])
+    # qml.CRX(4*alpha,wires=[0,1])
+    
     # Implement Alice's operations on her qubit here
-
+    if bits == 0:
+        pass
+    elif bits == 1:
+        qml.PauliX(wires=0)
+    elif bits == 2:
+        qml.PauliZ(wires=0)
+    elif bits == 3:
+        qml.PauliX(wires=0)
+        qml.PauliZ(wires=0)
     # Implement Bob's measurement procedure here
-
+    qml.CNOT(wires=[0,1])
+    qml.Hadamard(wires=0)
     # QHACK #
 
     return qml.probs(wires=[0, 1])
@@ -41,5 +56,6 @@ def return_probs(bits, alpha):
 if __name__ == "__main__":
     # DO NOT MODIFY anything in this code block
     inputs = sys.stdin.read().split(",")
+    # inputs = np.array([0,np.pi/4])
     output = return_probs(int(inputs[0]), float(inputs[1]))
     print(f"{output:.6f}")

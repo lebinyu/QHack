@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import sys
+from numpy import dtype
 import pennylane as qml
 from pennylane import numpy as np
 
@@ -21,7 +22,9 @@ def my_finite_diff_grad(params):
     gradients = np.zeros([len(params)])
     for i in range(len(params)):
         # QHACK # 
-
+        dcircuit = qml.grad(cost, argnum=0)
+        gradients = dcircuit(params)
+        
         # QHACK #
 
     return gradients
@@ -66,5 +69,6 @@ def cost(params):
 if __name__ == "__main__":
     # DO NOT MODIFY anything in this code block
     params = np.array(sys.stdin.read().split(","), dtype=float)
+    # params = np.array([0.7286407160000131, 0.604431298517586, 0.5966297756635066, 0.3361356009032367, 0.1633339827097956, 0.2086455467304198])
     output = my_finite_diff_grad(params)
     print(*output, sep=",")

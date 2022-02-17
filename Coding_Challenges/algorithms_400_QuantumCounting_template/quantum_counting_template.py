@@ -19,9 +19,15 @@ def oracle_matrix(indices):
     """
 
     # QHACK #
+    diagnal_matrix = np.eye(2 ** 4)
 
+    # diagnal_matrix = (1 / 2 ** 4) * np.eye(2 ** 4)
+    
+    for i in indices:
+        diagnal_matrix[i][i] = (- 1) * diagnal_matrix[i][i] 
+    my_array = diagnal_matrix
     # QHACK #
-
+    # print(my_array)
     return my_array
 
 
@@ -56,11 +62,14 @@ def circuit(indices):
 
     # QHACK #
 
-    target_wires =
+    target_wires = [0,1,2,3]
 
-    estimation_wires =
+    estimation_wires = [4,5,6,7]
 
     # Build your circuit here
+    qml.broadcast(qml.Hadamard,wires=target_wires,pattern='single')
+    # qml.broadcast(qml.Hadamard,wires=estimation_wires,pattern='single')
+    qml.QuantumPhaseEstimation(grover_operator(indices),target_wires=target_wires,estimation_wires=estimation_wires)
 
     # QHACK #
 
@@ -77,7 +86,20 @@ def number_of_solutions(indices):
     """
 
     # QHACK #
-
+    max = 0
+    decimal = 0
+    problist = circuit(indices)
+    for i in range(len(problist)):
+        if problist[i] >= max:
+            max = problist[i]
+            decimal = i
+            
+    # print(decimal)
+    # decimal = 9
+    theta = decimal * np.pi / 8
+    M = 16 * (np.sin(theta/2))**2
+    # print(M)
+    return M
     # QHACK #
 
 def relative_error(indices):
@@ -92,7 +114,7 @@ def relative_error(indices):
 
     # QHACK #
 
-    rel_err = 
+    rel_err = 100 * (number_of_solutions(indices) - len(indices)) / len(indices)
 
     # QHACK #
 
@@ -100,7 +122,8 @@ def relative_error(indices):
 
 if __name__ == '__main__':
     # DO NOT MODIFY anything in this code block
-    inputs = sys.stdin.read().split(",")
+    # inputs = sys.stdin.read().split(",")
+    inputs = np.array([0,2,3,5,6])
     lst=[int(i) for i in inputs]
     output = relative_error(lst)
     print(f"{output}")
